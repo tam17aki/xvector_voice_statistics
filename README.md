@@ -1,6 +1,6 @@
 # xvector_voice_statistics
 
-声優統計コーパスの音声データを[xvector-jtubespeech](https://github.com/sarulab-speech/xvector_jtubespeech)によって可視化したときのスクリプトたち
+[声優統計コーパス](https://voice-statistics.github.io/)の音声データを[xvector-jtubespeech](https://github.com/sarulab-speech/xvector_jtubespeech)によって可視化したときのスクリプトたち
 
 実行手順：
 1. python3 preprocess.py
