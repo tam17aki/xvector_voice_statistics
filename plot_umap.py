@@ -21,16 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import glob
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 from hydra import compose, initialize
-from umap import UMAP
+from omegaconf import DictConfig
+from umap.umap_ import UMAP
 
 
-def main(cfg):
+def main(cfg: DictConfig):
     """Perform UMAP plot in 2D space."""
     feat_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.feat_dir)
     for actor in cfg.actor:
@@ -57,21 +59,21 @@ def main(cfg):
         embedding_y = embedding[:, 1]
         for n in np.unique(emotion_type):
             if n == 0:  # angry
-                plt.scatter(
+                _ = plt.scatter(
                     embedding_x[emotion_type == n],
                     embedding_y[emotion_type == n],
                     label="angry",
                     s=10,
                 )
             elif n == 1:  # happy
-                plt.scatter(
+                _ = plt.scatter(
                     embedding_x[emotion_type == n],
                     embedding_y[emotion_type == n],
                     label="happy",
                     s=10,
                 )
             else:  # normal
-                plt.scatter(
+                _ = plt.scatter(
                     embedding_x[emotion_type == n],
                     embedding_y[emotion_type == n],
                     label="normal",
@@ -79,7 +81,7 @@ def main(cfg):
                 )
 
         plt.grid()
-        plt.legend(title=actor)
+        _ = plt.legend(title=actor)
         plt.tight_layout()
         plt.savefig("UMAP_{}.png".format(actor))
         plt.show()

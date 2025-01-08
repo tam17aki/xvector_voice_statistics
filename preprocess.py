@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Preprocess script.
 
-Copyright (C) 2023 by Akira TAMAMORI
+Copyright (C) 2025 by Akira TAMAMORI
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import glob
 import os
 import subprocess
@@ -29,18 +30,19 @@ import librosa
 import numpy as np
 import torch
 from hydra import compose, initialize
+from omegaconf import DictConfig
 from progressbar import progressbar as prg
 from torchaudio.compliance import kaldi
-from xvector_jtubespeech import XVector
+from xvector_jtubespeech.network.xvector import XVector
 
 
-def get_corpus(cfg):
+def get_corpus(cfg: DictConfig):
     """Download voice-statistics corpurs."""
     corpus_url = cfg.xvector.corpus_url
     data_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.data_dir)
     os.makedirs(data_dir, exist_ok=True)
 
-    subprocess.run(
+    _ = subprocess.run(
         "echo -n Downloading voice statistics corpus ...",
         text=True,
         shell=True,
@@ -51,17 +53,17 @@ def get_corpus(cfg):
             command = "wget " + "-P " + "/tmp/" + " " + corpus_url
             tar_file = actor + "_" + emotion + ".tar.gz"
             command = command + tar_file
-            subprocess.run(
+            _ = subprocess.run(
                 command, text=True, shell=True, capture_output=True, check=True
             )
             command = "cd " + data_dir + "; " + "tar -xzvf " + "/tmp/" + tar_file
-            subprocess.run(
+            _ = subprocess.run(
                 command, text=True, shell=True, capture_output=True, check=True
             )
     print(" done.")
 
 
-def get_pretrained_model(cfg):
+def get_pretrained_model(cfg: DictConfig):
     """Download pretrained model."""
     repo_url = cfg.xvector.repo_url
     data_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.data_dir)
@@ -69,7 +71,7 @@ def get_pretrained_model(cfg):
     model_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.model_dir)
     os.makedirs(model_dir, exist_ok=True)
 
-    subprocess.run(
+    _ = subprocess.run(
         "echo -n Downloading pretrained model ...",
         text=True,
         shell=True,
@@ -78,28 +80,27 @@ def get_pretrained_model(cfg):
 
     # download pretrained model from github repo.b rerained
     command = "wget " + "-P " + "/tmp/" + " " + repo_url
-    subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
+    _ = subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
     command = "cd " + "/tmp/" + "; " + "unzip " + "master.zip"
-    subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
+    _ = subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
     command = (
         "cp "
         + os.path.join("/tmp/", cfg.pretrained.repo_name, cfg.pretrained.file_name)
         + " "
         + os.path.join(model_dir, cfg.pretrained.file_name)
     )
-    subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
+    _ = subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
 
     # clean up
     command = "rm " + "/tmp/master.zip"
-    subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
+    _ = subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
     command = "rm -rf " + os.path.join("/tmp/", cfg.pretrained.repo_name)
-    subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
+    _ = subprocess.run(command, text=True, shell=True, capture_output=True, check=True)
     print(" done.")
 
 
-def extract_xvector(cfg):  # xvector model  # 16kHz mono
-    "Extract XVectors from wave file."
-
+def extract_xvector(cfg: DictConfig):  # xvector model  # 16kHz mono
+    """Extract XVectors from wave file."""
     feat_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.feat_dir)
     os.makedirs(feat_dir, exist_ok=True)
     data_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.data_dir)
@@ -134,7 +135,7 @@ def extract_xvector(cfg):  # xvector model  # 16kHz mono
                 np.save(out_path, xvector)
 
 
-def main(cfg):
+def main(cfg: DictConfig):
     """Perform preprocess."""
     get_corpus(cfg)
     get_pretrained_model(cfg)

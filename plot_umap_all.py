@@ -21,16 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import glob
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 from hydra import compose, initialize
-from umap import UMAP
+from omegaconf import DictConfig
+from umap.umap_ import UMAP
 
 
-def get_emotion_type(actor, emotion):
+def get_emotion_type(actor: str, emotion: str):
     """Return emotion type."""
     emotion_type = -1
     if emotion == "angry" and actor == "tsuchiya":
@@ -55,7 +57,7 @@ def get_emotion_type(actor, emotion):
     return emotion_type
 
 
-def main(cfg):
+def main(cfg: DictConfig):
     """Perform UMAP plot in 2D space."""
     feat_dir = os.path.join(cfg.xvector.root_dir, cfg.xvector.feat_dir)
     feat_list = []
@@ -77,63 +79,63 @@ def main(cfg):
     embedding_y = embedding[:, 1]
     for n in np.unique(emotion_type):
         if n == 0:  # angry tsuchiya
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="tsuchiya-angry",
                 s=10,
             )
         elif n == 1:  # happy tsuchiya
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="tsuchiya-happy",
                 s=10,
             )
         elif n == 2:  # normal tsuchiya
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="tsuchiya-normal",
                 s=10,
             )
         elif n == 3:  # angry fujitou
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="fujitou-angry",
                 s=10,
             )
         elif n == 4:  # happy fujitou
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="fujitou-happy",
                 s=10,
             )
         elif n == 5:  # normal fujitou
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="fujitou-normal",
                 s=10,
             )
         elif n == 6:  # angry uemura
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="uemura-angry",
                 s=10,
             )
         elif n == 7:  # happy uemura
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="uemura-happy",
                 s=10,
             )
         elif n == 8:  # normal uemura
-            plt.scatter(
+            _ = plt.scatter(
                 embedding_x[emotion_type == n],
                 embedding_y[emotion_type == n],
                 label="uemura-normal",
@@ -141,7 +143,7 @@ def main(cfg):
             )
 
     plt.grid()
-    plt.legend()
+    _ = plt.legend()
     plt.tight_layout()
     plt.savefig("UMAP_all.png")
     plt.show()
